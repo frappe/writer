@@ -17,7 +17,7 @@ async function getPdfFromDoc(entity_name, settings = {}) {
     size: settings?.watermark_size || 90,
     angle: settings?.watermark_angle || -45
   }
-  // Show watermark if apply_watermark is true AND text is not empty
+
   const shouldShowWatermark = applyWatermark && watermark.text.trim() !== ""
   const content = `
           <!DOCTYPE html>
@@ -84,7 +84,6 @@ export function entitiesDownload(team, entities, settings = {}, transfer = false
         return Promise.all(promises)
       })
     } else if (entity.document) {
-      // TODO: Get settings from document/user preferences
       const content = await getPdfFromDoc(entities[0].name, {})
       parentFolder.file(entity.title + '.pdf', content)
     } else {

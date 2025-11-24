@@ -46,22 +46,23 @@
                     description="Set the line height of the editor."
                   />
                 </div>
-                <div class="flex flex-col gap-4 pb-5 pr-5">
+                <div v-if="tabIndex === 0" class="flex flex-col gap-4 pb-5 pr-5">
+                  <h3 class="text-sm font-medium text-ink-gray-7">
+                    Watermark
+                  </h3>
                   <FormControl
-                    v-if="tabIndex === 0"
                     v-model="settings.watermark_text"
                     type="text"
-                    label="Watermark Text"
+                    label="Text"
                     placeholder="Enter watermark text"
                     :description="`Set the text for watermark.`"
                   />
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormControl
-                      v-if="tabIndex === 0"
                       v-model.number="settings.watermark_size"
                       type="number"
-                      label="Watermark Size (px)"
-                      placeholder="40"
+                      label="Size (px)"
+                      placeholder="90"
                       :min="10"
                       :max="300"
                       :step="5"
@@ -69,10 +70,9 @@
                       class="w-full"
                     />
                     <FormControl
-                      v-if="tabIndex === 0"
                       v-model.number="settings.watermark_angle"
                       type="number"
-                      label="Watermark Angle (°)"
+                      label="Angle (°)"
                       placeholder="-45"
                       :min="-180"
                       :max="180"
@@ -81,10 +81,12 @@
                       class="w-full"
                     />
                   </div>
+                </div>
+                <div v-if="tabIndex === 1" class="flex flex-col gap-2 pb-5 pr-5 [&_label]:text-xs [&_p]:text-xs">
                   <FormControl
-                    v-if="tabIndex === 1"
                     v-model="settings.apply_watermark"
                     type="checkbox"
+                    size="sm"
                     label="Apply Watermark to PDF"
                     :description="'Enable this to automatically apply watermark when downloading PDF for this document.'"
                   />
