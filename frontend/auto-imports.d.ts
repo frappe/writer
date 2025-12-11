@@ -6,12 +6,16 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const LucideBuilding: typeof import('~icons/lucide/building')['default']
+  const LucideEye: typeof import('~icons/lucide/eye')['default']
   const LucideFile: typeof import('~icons/lucide/file')['default']
   const LucideFileText: typeof import('~icons/lucide/file-text')['default']
   const LucideFileUser: typeof import('~icons/lucide/file-user')['default']
   const LucideFolderArchive: typeof import('~icons/lucide/folder-archive')['default']
   const LucideGlobe2: typeof import('~icons/lucide/globe2')['default']
   const LucideLock: typeof import('~icons/lucide/lock')['default']
+  const LucidePencil: typeof import('~icons/lucide/pencil')['default']
   const LucideSettings: typeof import('~icons/lucide/settings')['default']
   const LucideTrash: typeof import('~icons/lucide/trash')['default']
+  const LucideUpload: typeof import('~icons/lucide/upload')['default']
 }

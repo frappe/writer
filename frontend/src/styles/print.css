@@ -257,4 +257,48 @@
     float: right;
     margin-left: 1rem;
   }
+
+  /* Table of Contents print styles - simple implementation */
+  [data-type="toc-node"],
+  .table-of-contents-node {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  [data-type="toc-node"] *,
+  .table-of-contents-node * {
+    display: revert !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  [data-type="toc-node"] ol,
+  .table-of-contents-node ol {
+    list-style-type: decimal !important;
+    display: block !important;
+    margin: 0.5em 0 !important;
+    padding-left: 1.5em !important;
+  }
+
+  /* Nested lists should have proper indentation */
+  [data-type="toc-node"] ol ol,
+  .table-of-contents-node ol ol {
+    margin-top: 0.25em !important;
+    margin-bottom: 0.25em !important;
+    padding-left: 1.5em !important;
+  }
+
+  [data-type="toc-node"] li,
+  .table-of-contents-node li {
+    display: list-item !important;
+    margin: 0.25em 0 !important;
+  }
+
+  [data-type="toc-node"] p,
+  .table-of-contents-node p {
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 }

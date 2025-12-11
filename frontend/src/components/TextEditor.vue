@@ -360,6 +360,7 @@ function getParagraphAttr(editor, attr, def) {
 }
 
 const menuButtons = computed(() => [
+<<<<<<< HEAD
   ['Paragraph', 'Heading 1', 'Heading 2', 'Heading 3', 'Heading 4'],
   'Bold',
   'Italic',
