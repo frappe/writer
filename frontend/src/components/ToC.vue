@@ -31,7 +31,7 @@
           v-for="(tab, index) in tabs"
           :key="tab.id"
           :class="[
-            'relative transition-all duration-200',
+            'relative transition-all duration-200 group',
             dragState.isDragging && dragState.draggedId === tab.id && 'opacity-0',
           ]"
           @dragover.prevent="onDragOver($event, index)"
@@ -60,35 +60,42 @@
             </TextInput>
           </div>
           <component v-else :is="tab.id === activeTabId ? ContextMenu : 'div'" :items="tabActions">
-            <Button
-              variant="ghost"
-              class="w-full !text-ink-gray-5 !justify-start cursor-grab active:cursor-grabbing"
-              :class="tab.id === activeTabId && 'font-medium !text-ink-gray-8'"
-              :label="tab.label"
-              :icon-left="h(LucideFileText, { class: 'size-4 shrink-0' })"
-              @click="tab.id !== activeTabId && editor.commands.changeTab(tab.id)"
-              :draggable="editor.isEditable"
-              @dragstart="onDragStart($event, tab, index)"
-              @dragend.prevent="onDragEnd"
-            >
-              <template #suffix v-if="tab.id === activeTabId">
-                <div class="flex gap-1 ml-auto">
-                  <Button
-                    @click.stop="showHeadings = !showHeadings"
-                    variant="ghost"
-                    :icon="h(showHeadings ? LucideMinus : LucidePlus, { class: 'size-4' })"
-                  />
-
-                  <Dropdown :options="tabActions">
-                    <Button
-                      variant="ghost"
-                      :icon="h(LucideMoreVertical, { class: 'size-4' })"
-                      @click.stop
-                    />
-                  </Dropdown>
-                </div>
-              </template>
-            </Button>
+            <div class="relative flex items-center">
+              <Button
+                v-if="tab.id === activeTabId"
+                @click.stop="showHeadings = !showHeadings"
+                variant="ghost"
+                class="!absolute !p-0.5 !size-6 z-10 left-0.5"
+                :icon="h(showHeadings ? LucideMinus : LucidePlus, { class: 'size-3.5' })"
+                :tooltip="showHeadings ? 'Collapse' : 'Expand'"
+              />
+              <Button
+                variant="ghost"
+                class="w-full !text-ink-gray-5 !justify-start cursor-grab active:cursor-grabbing"
+                :class="[
+                  tab.id === activeTabId && 'font-medium !text-ink-gray-8',
+                  tab.id === activeTabId && '!pl-8',
+                ]"
+                :label="tab.label"
+                :icon-left="h(LucideFileText, { class: 'size-4 shrink-0' })"
+                @click="tab.id !== activeTabId && editor.commands.changeTab(tab.id)"
+                :draggable="editor.isEditable"
+                @dragstart="onDragStart($event, tab, index)"
+                @dragend.prevent="onDragEnd"
+              >
+                <template #suffix v-if="tab.id === activeTabId">
+                  <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Dropdown :options="tabActions">
+                      <Button
+                        variant="ghost"
+                        :icon="h(LucideMoreVertical, { class: 'size-4' })"
+                        @click.stop
+                      />
+                    </Dropdown>
+                  </div>
+                </template>
+              </Button>
+            </div>
           </component>
           <template v-if="tab.id === activeTabId && currentTabAnchors.length">
             <div v-if="showHeadings" class="table-of-contents flex flex-col gap-0.5 ms-6 my-1">
