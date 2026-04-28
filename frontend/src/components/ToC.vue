@@ -62,27 +62,30 @@
           <component v-else :is="tab.id === activeTabId ? ContextMenu : 'div'" :items="tabActions">
             <div class="relative flex items-center">
               <Button
-                v-if="tab.id === activeTabId"
-                @click.stop="showHeadings = !showHeadings"
-                variant="ghost"
-                class="!absolute !p-0.5 !size-6 z-10 left-0.5"
-                :icon="h(showHeadings ? LucideMinus : LucidePlus, { class: 'size-3.5' })"
-                :tooltip="showHeadings ? 'Collapse' : 'Expand'"
-              />
-              <Button
                 variant="ghost"
                 class="w-full !text-ink-gray-5 !justify-start cursor-grab active:cursor-grabbing"
-                :class="[
-                  tab.id === activeTabId && 'font-medium !text-ink-gray-8',
-                  tab.id === activeTabId && '!pl-8',
-                ]"
+                :class="tab.id === activeTabId && 'font-medium !text-ink-gray-8'"
                 :label="tab.label"
-                :icon-left="h(LucideFileText, { class: 'size-4 shrink-0' })"
+                :icon-left="
+                  tab.id !== activeTabId
+                    ? h(LucideFileText, { class: 'size-4 shrink-0' })
+                    : undefined
+                "
                 @click="tab.id !== activeTabId && editor.commands.changeTab(tab.id)"
                 :draggable="editor.isEditable"
                 @dragstart="onDragStart($event, tab, index)"
                 @dragend.prevent="onDragEnd"
               >
+                <template #prefix v-if="tab.id === activeTabId">
+                  <Button
+                    @click.stop="showHeadings = !showHeadings"
+                    variant="ghost"
+                    class="!p-0.5 !size-6 -ml-1 -mr-1.5"
+                    :tooltip="showHeadings ? 'Collapse' : 'Expand'"
+                    :icon="h(showHeadings ? LucideMinus : LucidePlus, { class: 'size-3.5' })"
+                  />
+                  <LucideFileText class="size-4 shrink-0" />
+                </template>
                 <template #suffix v-if="tab.id === activeTabId">
                   <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
                     <Dropdown :options="tabActions">
