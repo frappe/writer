@@ -18,9 +18,7 @@
     </div>
     <div v-if="show" class="grow flex flex-col gap-0.5">
       <div class="flex justify-between items-center ps-2 pr-1 pb-1">
-        <span class="text-base font-medium text-ink-gray-8 select-none"
-          >Table of Contents</span
-        >
+        <span class="text-base font-medium text-ink-gray-8 select-none">Table of Contents</span>
         <Button
           :icon="LucideLeftClose"
           variant="ghost"
@@ -28,19 +26,13 @@
           :tooltip="show ? 'Hide' : 'Table of Contents'"
         />
       </div>
-      <div
-        v-if="tabs.length > 0"
-        class="flex flex-col gap-0.5 mb-2"
-        @drop.prevent="onDrop"
-      >
+      <div v-if="tabs.length > 0" class="flex flex-col gap-0.5 mb-2" @drop.prevent="onDrop">
         <div
           v-for="(tab, index) in tabs"
           :key="tab.id"
           :class="[
-            'relative transition-all duration-200',
-            dragState.isDragging &&
-              dragState.draggedId === tab.id &&
-              'opacity-0',
+            'relative transition-all duration-200 group',
+            dragState.isDragging && dragState.draggedId === tab.id && 'opacity-0',
           ]"
           @dragover.prevent="onDragOver($event, index)"
         >
@@ -53,10 +45,7 @@
             "
             class="h-8 my-0.5 border border-dashed rounded-sm mx-2"
           />
-          <div
-            v-if="editingTabId === tab.id && delayedEdit"
-            class="flex items-center"
-          >
+          <div v-if="editingTabId === tab.id && delayedEdit" class="flex items-center">
             <TextInput
               v-model="editingTabLabel"
               v-on-outside-click="() => finishRenaming(false)"
@@ -70,42 +59,49 @@
               </template>
             </TextInput>
           </div>
-          <component
-            v-else
-            :is="tab.id === activeTabId ? ContextMenu : 'div'"
-            :items="tabActions"
-          >
-            <Button
-              variant="ghost"
-              class="w-full !text-ink-gray-5 !justify-start cursor-grab active:cursor-grabbing"
-              :class="tab.id === activeTabId && 'font-medium !text-ink-gray-8'"
-              :label="tab.label"
-              :icon-left="h(LucideFileText, { class: 'size-4 shrink-0' })"
-              @click="
-                tab.id !== activeTabId && editor.commands.changeTab(tab.id)
-              "
-              :draggable="editor.isEditable"
-              @dragstart="onDragStart($event, tab, index)"
-              @dragend.prevent="onDragEnd"
-            >
-              <template #suffix v-if="tab.id === activeTabId"
-                ><Button
-                  @click="showHeadings = !showHeadings"
-                  class="ml-auto"
-                  variant="ghost"
-                  :icon="
-                    h(showHeadings ? LucideMinus : LucidePlus, {
-                      class: 'size-4',
-                    })
-                  "
-              /></template>
-            </Button>
+          <component v-else :is="tab.id === activeTabId ? ContextMenu : 'div'" :items="tabActions">
+            <div class="relative flex items-center">
+              <Button
+                variant="ghost"
+                class="w-full !text-ink-gray-5 !justify-start cursor-grab active:cursor-grabbing"
+                :class="tab.id === activeTabId && 'font-medium !text-ink-gray-8'"
+                :label="tab.label"
+                :icon-left="
+                  tab.id !== activeTabId
+                    ? h(LucideFileText, { class: 'size-4 shrink-0' })
+                    : undefined
+                "
+                @click="tab.id !== activeTabId && editor.commands.changeTab(tab.id)"
+                :draggable="editor.isEditable"
+                @dragstart="onDragStart($event, tab, index)"
+                @dragend.prevent="onDragEnd"
+              >
+                <template #prefix v-if="tab.id === activeTabId">
+                  <Button
+                    @click.stop="showHeadings = !showHeadings"
+                    variant="ghost"
+                    class="!p-0.5 !size-6 -ml-1 -mr-1.5"
+                    :tooltip="showHeadings ? 'Collapse' : 'Expand'"
+                    :icon="h(showHeadings ? LucideMinus : LucidePlus, { class: 'size-3.5' })"
+                  />
+                  <LucideFileText class="size-4 shrink-0" />
+                </template>
+                <template #suffix v-if="tab.id === activeTabId">
+                  <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Dropdown :options="tabActions">
+                      <Button
+                        variant="ghost"
+                        :icon="h(LucideMoreVertical, { class: 'size-4' })"
+                        @click.stop
+                      />
+                    </Dropdown>
+                  </div>
+                </template>
+              </Button>
+            </div>
           </component>
           <template v-if="tab.id === activeTabId && currentTabAnchors.length">
-            <div
-              v-if="showHeadings"
-              class="table-of-contents flex flex-col gap-0.5 ms-6 my-1"
-            >
+            <div v-if="showHeadings" class="table-of-contents flex flex-col gap-0.5 ms-6 my-1">
               <div v-for="anchor in currentTabAnchors" class="flex pr-2.5">
                 <a
                   :href="'#' + anchor.id"
@@ -115,8 +111,7 @@
                   @click.prevent="onAnchorClick(anchor.id)"
                   :key="anchor.id"
                   :class="
-                    anchor.isActive &&
-                    'text-ink-gray-8 bg-surface-gray-3 hover:bg-surface-gray-4'
+                    anchor.isActive && 'text-ink-gray-8 bg-surface-gray-3 hover:bg-surface-gray-4'
                   "
                   :style="{ '--level': anchor.level - maxLevel }"
                 >
@@ -178,8 +173,9 @@ import LucidePencil from '~icons/lucide/pencil'
 import LucideLink from '~icons/lucide/link'
 import LucideTrash from '~icons/lucide/trash'
 import LucideLeftClose from '~icons/lucide/panel-left-close'
+import LucideMoreVertical from '~icons/lucide/more-vertical'
 import { ref, watch, computed, h, onMounted, onBeforeUnmount } from 'vue'
-import { TextInput, ContextMenu } from 'frappe-ui'
+import { TextInput, ContextMenu, Dropdown } from 'frappe-ui'
 import { copyToClipboard } from 'frappe-ui/drive/js/utils'
 
 const props = defineProps({
@@ -240,9 +236,7 @@ const currentTabAnchors = computed(() => {
 
   // Filter anchors that are within the active tab's position range
   return props.anchors.filter((anchor) => {
-    const element = props.editor.view.dom.querySelector(
-      `[data-toc-id="${anchor.id}"]`,
-    )
+    const element = props.editor.view.dom.querySelector(`[data-toc-id="${anchor.id}"]`)
     if (!element) return false
 
     const pos = props.editor.view.posAtDOM(element, 0)
@@ -251,9 +245,7 @@ const currentTabAnchors = computed(() => {
 })
 
 const maxLevel = computed(() =>
-  currentTabAnchors.value.length
-    ? Math.min(...currentTabAnchors.value.map((k) => k.level)) - 1
-    : 0,
+  currentTabAnchors.value.length ? Math.min(...currentTabAnchors.value.map((k) => k.level)) - 1 : 0
 )
 
 const onAnchorClick = (id) => {
@@ -292,10 +284,7 @@ const startRenaming = (tabId) => {
 
 const finishRenaming = (esc = false) => {
   if (!esc && editingTabId.value && editingTabLabel.value.trim()) {
-    props.editor.commands.renameTab(
-      editingTabId.value,
-      editingTabLabel.value.trim(),
-    )
+    props.editor.commands.renameTab(editingTabId.value, editingTabLabel.value.trim())
   }
   editingTabId.value = null
   editingTabLabel.value = ''
@@ -407,10 +396,7 @@ const tabActions = [
   {
     label: 'Copy Link',
     icon: LucideLink,
-    onClick: () =>
-      copyToClipboard(
-        window.location.href.split('#')[0] + '#' + activeTabId.value,
-      ),
+    onClick: () => copyToClipboard(window.location.href.split('#')[0] + '#' + activeTabId.value),
   },
   {
     group: true,
