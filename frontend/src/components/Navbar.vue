@@ -55,7 +55,7 @@
           Sign In
         </Button>
         <Button
-          v-if="!isLoggedIn"
+          v-if="isFrappeCloud"
           class="hidden md:block"
           variant="solid"
           label="Try out Drive"
@@ -136,6 +136,9 @@ import WriterLogo from './WriterLogo.vue'
 import { useRoute } from 'vue-router'
 
 const store = useStore()
+// Only advertise the hosted signup on Frappe Cloud. On a self-hosted instance
+// this sends the operator's own logged-out visitors to a third-party signup.
+const isFrappeCloud = Boolean(window.is_fc_site)
 const open = (url) => {
   window.open(url, '_blank')
 }
